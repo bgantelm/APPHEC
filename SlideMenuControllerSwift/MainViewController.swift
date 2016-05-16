@@ -18,10 +18,19 @@ class MainViewController: UIViewController, UITabBarDelegate, MKMapViewDelegate,
     
     @IBOutlet weak var Mymap: MKMapView!
     @IBOutlet weak var tableView: UITableView!
-    
+    let locationManager = CLLocationManager()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        self.Mymap.showsUserLocation = true
+
         
         
         let italy = MKPointAnnotation()
@@ -103,7 +112,16 @@ class MainViewController: UIViewController, UITabBarDelegate, MKMapViewDelegate,
         super.didReceiveMemoryWarning()
     }
 
+    @IBAction func Local(sender: AnyObject) {
+        let location = self.locationManager.location
+        let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
+        let mapCamera = MKMapCamera(lookingAtCenterCoordinate: center, fromEyeCoordinate: center, eyeAltitude: 1000)
+        Mymap.setCamera(mapCamera, animated: true)
+        self.locationManager.stopUpdatingHeading()
+    }
 }
+
+
 
 
 extension MainViewController : UITableViewDelegate {
